@@ -9,7 +9,11 @@ int main(int argc, const char* argv[])
 
   chunk c; 
   init_chunk(&c);
-  write_chunk(&c, OP_RETURN);
+  int constant = add_constant(&c, 1.2);
+  write_chunk(&c, OP_CONSTANT, 123);
+  write_chunk(&c, constant, 123);
+
+  write_chunk(&c, OP_RETURN, 123);
 
   disassemble_chunk(&c, "test chunk");
 
