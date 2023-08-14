@@ -30,7 +30,7 @@ void write_chunk(chunk* c, uint8_t byte, int line)
 
   c->code[c->count] = byte;
   c->lines[c->count] = line;
-  ++c->count;
+  c->count++;
 }
 
 int add_constant(chunk* c, value_t value)

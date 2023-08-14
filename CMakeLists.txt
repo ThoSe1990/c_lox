@@ -33,5 +33,6 @@ ${PROJECT_SOURCE_DIR}/src/chunk.c
 ${PROJECT_SOURCE_DIR}/src/memory.c
 ${PROJECT_SOURCE_DIR}/src/debug.c
 ${PROJECT_SOURCE_DIR}/src/value.c
+${PROJECT_SOURCE_DIR}/src/vm.c
 )
 target_include_directories(${target} PRIVATE ${PROJECT_SOURCE_DIR}/src)

@@ -18,7 +18,7 @@ void write_value_array(value_array* arr, value_t value)
     arr->values = GROW_ARRAY(value_t, arr->values, old_cap, arr->capacity);
   }
   arr->values[arr->count] = value;
-  ++arr->count;
+  arr->count++;
 }
 void free_value_array(value_array* arr)
 {
