@@ -34,5 +34,7 @@ ${PROJECT_SOURCE_DIR}/src/memory.c
 ${PROJECT_SOURCE_DIR}/src/debug.c
 ${PROJECT_SOURCE_DIR}/src/value.c
 ${PROJECT_SOURCE_DIR}/src/vm.c
+${PROJECT_SOURCE_DIR}/src/compiler.c
+${PROJECT_SOURCE_DIR}/src/scanner.c
 )
 target_include_directories(${target} PRIVATE ${PROJECT_SOURCE_DIR}/src)

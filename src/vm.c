@@ -3,6 +3,7 @@
 #include "common.h"
 #include "debug.h"
 #include "vm.h"
+#include "compiler.h"
 
 vm g_vm;
 
@@ -72,11 +73,24 @@ static interpret_result run()
 #undef BINARY_OP
 }
 
-interpret_result interpret(chunk* c)
+interpret_result interpret(const char* source)
 {
-  g_vm.chunk = c;
+  chunk c;
+  init_chunk(&c);
+
+  if(!compile(source, &c))
+  {
+    free_chunk(&c);
+    return INTERPRET_COMPILE_ERROR;
+  }
+
+  g_vm.chunk = &c;
   g_vm.ip = g_vm.chunk->code;
-  return run();
+
+  interpret_result result = run();
+
+  free_chunk(&c);
+return result; 
 }
 
 void push(value_t value)

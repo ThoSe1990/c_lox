@@ -20,7 +20,7 @@ typedef enum {
 
 void init_vm();
 void free_vm();
-interpret_result interpret(chunk* c);
+interpret_result interpret(const char* source);
 void push(value_t value);
 value_t pop();
 
