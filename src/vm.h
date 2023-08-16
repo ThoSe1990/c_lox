@@ -8,8 +8,8 @@
 typedef struct {
   chunk* chunk;
   uint8_t* ip;
-  value_t stack[STACK_MAX];
-  value_t* stack_top;
+  value stack[STACK_MAX];
+  value* stack_top;
 } vm;
 
 typedef enum {
@@ -21,7 +21,7 @@ typedef enum {
 void init_vm();
 void free_vm();
 interpret_result interpret(const char* source);
-void push(value_t value);
-value_t pop();
+void push(value value);
+value pop();
 
 #endif 

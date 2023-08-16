@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "common.h"
@@ -12,6 +13,20 @@ static void reset_stack()
   g_vm.stack_top = g_vm.stack;
 }
 
+static void runtime_error(const char* format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  vfprintf(stderr, format, args);
+  va_end(args);
+  fputs("\n", stderr);
+
+  size_t instruction = g_vm.ip - g_vm.chunk->code - 1;
+  int line = g_vm.chunk->lines[instruction];
+  fprintf(stderr, "[line %d] in script\n", line);
+  reset_stack();
+}
+
 void init_vm()
 {
   reset_stack();
@@ -21,22 +36,47 @@ void free_vm()
 
 }
 
+void push(value v)
+{
+  *g_vm.stack_top = v;
+  g_vm.stack_top++;
+}
+value pop()
+{
+  g_vm.stack_top--;
+  return *g_vm.stack_top;
+}
+
+static value peek(int distance)
+{
+  return g_vm.stack_top[-1 - distance];
+}
+
+static bool is_falsey(value v)
+{
+  return IS_NIL(v) || (IS_BOOL(v) && !AS_BOOL(v)); 
+}
+
 static interpret_result run() 
 {
 #define READ_BYTE() (*g_vm.ip++)
 #define READ_CONSTANT() (g_vm.chunk->constants.values[READ_BYTE()])
-#define BINARY_OP(op) \
+#define BINARY_OP(value_t, op) \
   do { \
-    double b = pop(); \
-    double a = pop(); \
-    push(a op b); \
+    if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) { \
+      runtime_error("Operand must be numbers."); \
+      return INTERPRET_RUNTIME_ERROR; \
+    } \
+    double b = AS_NUMBER(pop()); \
+    double a = AS_NUMBER(pop()); \
+    push(value_t(a op b)); \
   } while (false)
 
   for(;;)
   {
 #ifdef DEBUG_TRACE_EXTENSION
   printf("        ");
-  for (value_t* slot = g_vm.stack; slot < g_vm.stack_top; slot++)
+  for (value* slot = g_vm.stack; slot < g_vm.stack_top; slot++)
   {
     printf("[ ");
     print_value(*slot);
@@ -51,20 +91,37 @@ static interpret_result run()
     {
       case OP_CONSTANT:
       {
-        value_t constant = READ_CONSTANT();
+        value constant = READ_CONSTANT();
         push(constant);
       }
-      break; case OP_ADD:      BINARY_OP(+);
-      break; case OP_SUBTRACT: BINARY_OP(-);
-      break; case OP_MULTIPLY: BINARY_OP(*);
-      break; case OP_DIVIDE:   BINARY_OP(/);
-      break; case OP_NEGATE: push(-pop());
+      break; case OP_NIL: push(NIL_VAL);
+      break; case OP_TRUE: push(BOOL_VAL(true));
+      break; case OP_FALSE: push(BOOL_VAL(false));
+      break; case OP_EQUAL:
+        value a = pop();
+        value b = pop();
+        push(BOOL_VAL(values_equal(a,b)));
+      break; case OP_GREATER:          BINARY_OP(BOOL_VAL, >);
+      break; case OP_LESS:             BINARY_OP(BOOL_VAL, <);
+      break; case OP_ADD:         BINARY_OP(NUMBER_VAL, +);
+      break; case OP_SUBTRACT:    BINARY_OP(NUMBER_VAL, -);
+      break; case OP_MULTIPLY:    BINARY_OP(NUMBER_VAL, *);
+      break; case OP_DIVIDE:      BINARY_OP(NUMBER_VAL, /);
+      break; case OP_NOT: push(BOOL_VAL(is_falsey(pop())));
+      break; case OP_NEGATE: 
+        if (!IS_NUMBER(peek(0))) 
+        {
+          runtime_error("Operand must be a number.");
+          return INTERPRET_RUNTIME_ERROR;
+        }
+        push(NUMBER_VAL(-AS_NUMBER(pop())));  
       break; case OP_RETURN: 
       {
         print_value(pop());
         printf("\n");
         return INTERPRET_OK;
       }
+
     }
   }
 
@@ -90,16 +147,6 @@ interpret_result interpret(const char* source)
   interpret_result result = run();
 
   free_chunk(&c);
-return result; 
+  return result; 
 }
 
-void push(value_t value)
-{
-  *g_vm.stack_top = value;
-  g_vm.stack_top++;
-}
-value_t pop()
-{
-  g_vm.stack_top--;
-  return *g_vm.stack_top;
-}

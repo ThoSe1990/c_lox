@@ -6,11 +6,18 @@
 
 typedef enum {
   OP_CONSTANT,
+  OP_NIL,
+  OP_TRUE,
+  OP_FALSE,
+  OP_EQUAL,
+  OP_GREATER,
+  OP_LESS,
   OP_NEGATE, 
   OP_ADD,
   OP_SUBTRACT,
   OP_MULTIPLY,
   OP_DIVIDE,
+  OP_NOT,
   OP_RETURN
 } op_code;
 
@@ -26,6 +33,6 @@ typedef struct
 void init_chunk(chunk* c);
 void free_chunk(chunk* c);
 void write_chunk(chunk* c, uint8_t byte, int line);
-int add_constant(chunk* c, value_t v);
+int add_constant(chunk* c, value v);
 
 #endif
