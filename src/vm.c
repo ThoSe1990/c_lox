@@ -34,9 +34,11 @@ void init_vm()
 {
   reset_stack();
   g_vm.objects = NULL;
+  init_table(&g_vm.strings);
 }
 void free_vm()
 {
+  free_table(&g_vm.strings);
   free_objects();
 }
 

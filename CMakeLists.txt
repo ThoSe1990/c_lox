@@ -37,5 +37,6 @@ ${PROJECT_SOURCE_DIR}/src/vm.c
 ${PROJECT_SOURCE_DIR}/src/compiler.c
 ${PROJECT_SOURCE_DIR}/src/scanner.c
 ${PROJECT_SOURCE_DIR}/src/object.c
+${PROJECT_SOURCE_DIR}/src/table.c
 )
 target_include_directories(${target} PRIVATE ${PROJECT_SOURCE_DIR}/src)

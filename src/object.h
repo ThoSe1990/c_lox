@@ -9,7 +9,7 @@
 #define IS_STRING(v)    is_obj_type(v, OBJ_STRING)
 
 #define AS_STRING(v)    ((obj_string*)AS_OBJ(v))
-#define AS_CSTRING(v)    (((obj_string*)AS_OBJ(v))->chars)
+#define AS_CSTRING(v)   (((obj_string*)AS_OBJ(v))->chars)
 
 typedef enum {
   OBJ_STRING
@@ -24,6 +24,7 @@ struct obj_string {
   obj object;
   int length;
   char* chars;
+  uint32_t hash;
 };
 
 obj_string* take_string(char* chars, int length);
