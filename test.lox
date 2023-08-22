@@ -1,18 +1,9 @@
 
 var str = "hello world";
-
-print str; 
-
-print str + " 2022";
-
-var a = 1;
-var b = 2; 
-var c = a+b;
-print c;
-a = 1234;
-print a;
-
-fun foo () {
- print "foo";
+{
+  var str = "local hello world";
+  print str;
+  str = "other value";
+  print str;
 }
-
+print str; 
