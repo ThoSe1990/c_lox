@@ -213,6 +213,11 @@ static interpret_result run()
         uint16_t offset = READ_SHORT();
         if (is_falsey(peek(0))) g_vm.ip += offset;
       }
+      break; case OP_LOOP:
+      {
+        uint16_t offest = READ_SHORT();
+        g_vm.ip -= offest;
+      } 
       break; case OP_RETURN: 
       {
         // exit the interpreter
