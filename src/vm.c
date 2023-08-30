@@ -83,6 +83,8 @@ static interpret_result run()
 {
 #define READ_BYTE() (*g_vm.ip++)
 #define READ_CONSTANT() (g_vm.chunk->constants.values[READ_BYTE()])
+#define READ_SHORT() \
+  (g_vm.ip += 2, (uint16_t)((g_vm.ip[-2] << 8) | g_vm.ip[-1]))
 #define READ_STRING() AS_STRING(READ_CONSTANT())
 #define BINARY_OP(value_t, op) \
   do { \
@@ -201,6 +203,16 @@ static interpret_result run()
         print_value(pop());
         printf("\n");
       }
+      break; case OP_JUMP:
+      {
+        uint16_t offset = READ_SHORT();
+        g_vm.ip += offset; 
+      } 
+      break; case OP_JUMP_IF_FALSE: 
+      {
+        uint16_t offset = READ_SHORT();
+        if (is_falsey(peek(0))) g_vm.ip += offset;
+      }
       break; case OP_RETURN: 
       {
         // exit the interpreter
@@ -211,6 +223,7 @@ static interpret_result run()
   }
 
 #undef READ_BYTE
+#undef READ_SHORT
 #undef READ_CONSTANT
 #undef READ_STRING
 #undef BINARY_OP

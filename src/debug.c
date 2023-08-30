@@ -25,6 +25,14 @@ static int byte_instruction(const char* name, chunk* c, int offset)
   return offset + 2;
 }
 
+static int jump_instruction(const char* name, int sign, chunk* c, int offset)
+{
+  uint16_t jump = (uint16_t)(c->code[offset+1] << 8);
+  jump |= c->code[offset+2];
+  printf("%-16s %4d -> %d\n", name, offset, offset+3+sign*jump);
+  return offset + 3;
+}
+
 void disassemble_chunk(chunk* c, const char* name)
 {
   printf("== %s ==\n", name);
@@ -89,6 +97,10 @@ int disassemble_instruction(chunk* c, int offset)
     return simple_instruction("OP_DIVIDE", offset);
   case OP_PRINT:
     return simple_instruction("OP_PRINT", offset);
+  case OP_JUMP:
+    return jump_instruction("OP_JUMP", 1, c, offset);
+  case OP_JUMP_IF_FALSE:
+    return jump_instruction("OP_JUMP_IF_FALSE", 1, c, offset);
   case OP_RETURN:
     return simple_instruction("OP_RETURN", offset);
   default:

@@ -1,9 +1,6 @@
 
-var str = "hello world";
-{
-  var str = "local hello world";
-  print str;
-  str = "other value";
-  print str;
+if (1 == 2) {
+  print "its true!";
+} else {
+  print "its not ...";
 }
-print str; 
