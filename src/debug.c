@@ -103,6 +103,8 @@ int disassemble_instruction(chunk* c, int offset)
     return jump_instruction("OP_JUMP_IF_FALSE", 1, c, offset);
   case OP_LOOP:
     return jump_instruction("OP_LOOP", -1, c, offset);
+  case OP_CALL:
+    return byte_instruction("OP_CALL", c, offset);
   case OP_RETURN:
     return simple_instruction("OP_RETURN", offset);
   default:

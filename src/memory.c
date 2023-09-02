@@ -20,7 +20,18 @@ void free_object(obj* object)
 {
   switch (object->type)
   {
-    case OBJ_STRING: 
+
+    case OBJ_FUNCTION:
+    {
+      obj_function* func = (obj_function*)object; 
+      free_chunk(&func->chunk);
+      FREE(obj_function, object);
+    } 
+    break; case OBJ_NATIVE:
+    {
+      printf("<native fn>");
+    }
+    break; case OBJ_STRING: 
     {
       obj_string* str = (obj_string*)object;
       FREE_ARRAY(char, str->chars, str->length+1);
